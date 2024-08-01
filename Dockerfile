@@ -1,15 +1,13 @@
-FROM nginx:latest
-EXPOSE 80
+FROM node:latest
+EXPOSE 3000
+
+COPY ./ /app
 WORKDIR /app
-USER root
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY . ./
+RUN apt-get update
+RUN apt-get install -y iproute2
+RUN apt-get install -y unzip
+RUN npm install -r package.json
+RUN chmod +x nginx
 
-RUN chmod +x ./entrypoint.sh
-RUN chmod +x ./serv/xv
-
-RUN apt-get update && apt-get install -y iproute2 systemctl
-
-
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT [ "node", "server.js" ]
