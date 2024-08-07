@@ -18,6 +18,25 @@ app.get("/listen", function (req, res) {
     }
   });
 });
+// 新添加的 /ip 路由
+app.get("/ip", function (req, res) {
+  const networkInterfaces = os.networkInterfaces();
+  let ip = 'Unknown';
+
+  for (const interfaceName in networkInterfaces) {
+    const interfaces = networkInterfaces[interfaceName];
+    for (const iface of interfaces) {
+      // 跳过内部IP地址
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ip = iface.address;
+        break;
+      }
+    }
+    if (ip !== 'Unknown') break;
+  }
+
+  res.send(`当前IP地址: ${ip}`);
+});
 
 app.use(
   legacyCreateProxyMiddleware({
